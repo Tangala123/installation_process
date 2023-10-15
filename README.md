@@ -31,8 +31,7 @@
    23  git status
    24  mvn clean package# installation_process
 
-
-   # Apache Tomcat Installation process (Linux): https://tomcat.apache.org/download-90.cgi - install tomcat
+# Apache Tomcat Installation process (Linux): https://tomcat.apache.org/download-90.cgi - install tomcat
     1  cd /opt
     2  sudo yum install java-17-amazon-corretto-devel -y
     3  sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
@@ -45,7 +44,7 @@
    10  /opt/tomcat9/bin/shutdown.sh
    11  /opt/tomcat9/conf/server.xml - change port number
 
-   # Jenkins Installation process (Linux): https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.html- install java-17
+# Jenkins Installation process (Linux): https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.html- install java-17
    1 Go to - https://www.jenkins.io/ - Download - Redhat/Fedora/Alma/Rocky/CentOs
    2 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
    3 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
@@ -56,7 +55,36 @@
    8 sudo systemctl status jenkins 
    9 take Publicip current instance - hit browser and default port number(publicip:8080)
    10 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-   11 Installing suggested plugins - username,password,confirmpwd,fullname,email - enter - save and finish - start
+   11 Install suggested plugins - username,password,confirmpwd,fullname,email - enter - save and finish - start
    
+# jenkins default port number change 
+    1 cd /usr/lib/systemd/system
+    2 sudo vi jenkins.service
+    3 Environment="JENKINS_PORT=8383"
+    4 sudo systemctl restart jenkins
+    5 sudo systemctl daemon-reload 
 
-   
+#  Sonarqube Installation process (Linux):
+    1  cd /opt
+    2  sudo yum install java-17-amazon-corretto-devel -y
+    3  sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.1.0.73491.zip
+    4  sudo unzip sonarqube-10.1.0.73491.zip 
+    5  sudo mv sonarqube-10.1.0.73491/ sonar10
+    6  sudo chown -R ec2-user:ec2-user sonar10/
+    7  cd 
+    8  /opt/sonar10/bin/linux-x86-64/sonar.sh start
+    9  /opt/sonar10/bin/linux-x86-64/sonar.sh status
+   10  sudo vi /opt/sonar10/conf/sonar.properties
+
+# Ansible Installation process (Linux):
+    1  sudo yum update -y
+    2  sudo amazon-linux-extras install ansible2 -y
+    3  ansible --version
+    4  sudo vi /etc/ansible/hosts - PrivateIp ansible_user=ec2-user ansible_ssh_private_key_file=~/ansible.pem
+    5  pwd
+    6  sudo vi ansible.pem
+    7  chmod 400 ansible.pem
+    8  ansible -m ping 172.31.86.146 (apache privateip)
+    9  cat /etc/ansible/hosts
+   10  ansible 172.31.86.146 -m yum -a 'name=git state=present' - install git 
+   11  ansible 172.31.86.146 -m yum -a 'name=git state=present' --become 
