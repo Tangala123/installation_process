@@ -67,6 +67,7 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.
     5 sudo systemctl daemon-reload 
 
 #  Sonarqube Installation process (Linux):
+    https://www.sonarsource.com/products/sonarqube/downloads/ - install sonarqube community edition
     1  cd /opt
     2  sudo yum install java-17-amazon-corretto-devel -y
     3  sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.1.0.73491.zip
