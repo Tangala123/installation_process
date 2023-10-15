@@ -33,7 +33,6 @@
 
 
    # Apache Tomcat Installation process (Linux):
-   [ https://tomcat.apache.org/download-90.cgi] - install tomcat url
     1  cd /opt
     2  sudo yum install java-17-amazon-corretto-devel -y
     3  sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
@@ -47,7 +46,6 @@
    11  /opt/tomcat9/conf/server.xml - change port number
 
    # Jenkins Installation process (Linux):
-   [https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.html] - Install java-17 url
    1 Go to - https://www.jenkins.io/ - Download - Redhat/Fedora/Alma/Rocky/CentOs
    2 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
    3 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
