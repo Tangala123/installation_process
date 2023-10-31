@@ -46,7 +46,7 @@
    11  /opt/tomcat9/conf/server.xml - change port number
 
 # Jenkins Installation process (Linux): 
-https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.html- install java-17
+   Install java-17 - https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/amazon-linux-install.html 
    1 Go to - https://www.jenkins.io/ - Download - Redhat/Fedora/Alma/Rocky/CentOs
    2 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
    3 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
