@@ -1,0 +1,55 @@
+pipeline{
+    agent any
+    environment {
+        Tomcat_User = "ec2-user"
+        Tomcat_Ip = "172.31.25.185"
+    }
+    parameters {
+         string defaultValue: 'main', description: 'choose branch and deploy', name: 'branchName'
+    }
+    stages{
+        stage("Checkout Code"){
+            when {
+                expression{
+                    params.branchName == "main"
+                }
+            }
+            steps{
+               git branch: "${params.branchName}", url: 'https://github.com/Tangala123/first-mvn'
+            }
+        }
+        stage("Build"){
+            when {
+                expression{
+                    params.branchName == "develop"
+                }
+            }
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage("Deploy"){
+            when {
+                expression{
+                    params.branchName == "develop"
+                }
+            }
+            steps{
+                sshagent(['tomcat-deploy']) {
+                 sh "scp -o StrictHostKeyChecking=no target/first-mvn.war $Tomcat_User@$Tomcat_Ip:/opt/tomcat9/webapps/"
+                 sh "ssh $Tomcat_User@$Tomcat_Ip /opt/tomcat9/bin/shutdown.sh"
+                 sh "ssh $Tomcat_User@$Tomcat_Ip /opt/tomcat9/bin/startup.sh"
+                }
+            }
+        }
+    }
+    post {
+       success {
+            echo "When You build the job is Success"
+       }
+       failure {
+            echo "When You build the job is Failure"
+       }
+    }
+
+}
