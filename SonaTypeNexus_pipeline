@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git') {
+            steps {
+                git branch: "main", url: "https://github.com/Tangala123/first-mvn"
+            }
+        }
+        stage("Build") {
+            steps {
+                sh "mvn clean package" 
+            }
+        }
+        stage("Neuxs Upload") {
+            steps{
+              script{
+                  def pom = readMavenPom file: 'pom.xml'
+                  def version = pom.version
+                  def repoName = version.endsWith("SNAPSHOT") ? "first-mvn-snapshot" : "first-mvn"
+                  nexusArtifactUploader artifacts: [[artifactId: 'first-mvn', classifier: '', file: 'target/first-mvn.war', type: 'war']], 
+                  credentialsId: 'nexus3',
+                  groupId: 'com.icici', 
+                  nexusUrl: '172.31.89.161:8081',
+                  nexusVersion: 'nexus3',
+                  protocol: 'http', 
+                  repository: "${repoName}", 
+                  version: "${version}"
+              }
+            }
+        }
+    }
+}
