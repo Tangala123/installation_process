@@ -1,3 +1,12 @@
+# Publish code to SonarQube through Jenkins
+# Install sonarqube scanner plugin
+# Configure this plugin
+# Jenkins → Manage Jenkins → Configure System → SonarQube → Add SonarQube Instance
+# Provide Name → sonar9
+# Authentication Token → get this from sonarqube
+# SonarQube URL
+# Write Jenkins Job to publish the code to SonarQube
+
 pipeline {
     agent any
 
