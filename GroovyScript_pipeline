@@ -1,3 +1,6 @@
+# In jenkins do following configurations
+Jenkins → Manage Jenkins → Configure System → “Global Pipeline Libraries” → Add
+
 @Library("jhc_lib") _
 pipeline {
     agent any
