@@ -3,7 +3,7 @@
 # Configure this plugin
 # Jenkins → Manage Jenkins → Configure System → SonarQube → Add SonarQube Instance
 # Provide Name → sonar9
-# Authentication Token → get this from sonarqube
+# Authentication Token → get this from sonarqube (go to the sonarqube dashboard - click on my account - security - Generate token)
 # SonarQube URL
 # Write Jenkins Job to publish the code to SonarQube
 
