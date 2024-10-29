@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'NAME', defaultValue: 'John Doe', description: 'Name of the person')
+        string(name: 'LOCATION', defaultValue: 'New York', description: 'Location of the person')
+    }
+
+    stages {
+        stage('Print Parameters') {
+            steps {
+                echo "Name: ${params.NAME}"
+                echo "Location: ${params.LOCATION}"
+            }
+        }
+
+        stage('Example Stage') {
+            steps {
+                echo "Performing tasks for ${params.NAME} in ${params.LOCATION}"
+                // Add additional steps here
+            }
+        }
+    }
+}
