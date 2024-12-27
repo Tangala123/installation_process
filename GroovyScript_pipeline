@@ -23,5 +23,10 @@ pipeline {
                tomcatDeploy("172.31.25.185", "tomcat-deploy", "ec2-user")
             }
         }
+       stage ("Groovy") {
+            steps {
+               nexusUpload('maven_project','project','in.javahome')
+            }
+        }
     }
 }
