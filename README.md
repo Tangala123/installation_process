@@ -111,3 +111,157 @@
   12  cd
   13 /opt/nexus3/bin/linux_x86/nexus start
   14 /opt/nexus3/bin/linux_x86/nexus status 
+![ECS Vs EKS](https://github.com/user-attachments/assets/f16e4229-7045-4455-922b-58661de2b98c)
+![Service Vs Ingress](https://github.com/user-attachments/assets/05886306-4219-4d16-8dad-007a9d0efe96)
+1. Liveness Probe
+Purpose: Checks if the container is still running and responsive.
+Behavior:
+If the probe fails, Kubernetes restarts the container.
+Useful for detecting and recovering from application deadlocks or crashes.
+2. Readiness Probe
+Purpose: Checks if the container is ready to accept traffic.
+Behavior:
+If the probe fails, the container is removed from the Service's load balancer.
+Useful for ensuring the application is fully initialized and ready to handle requests.
+3. Startup Probe
+Purpose: Ensures that the application starts successfully.
+Behavior:
+If the probe fails, the container is killed and restarted.
+Unlike liveness probes, it prevents premature restarts during application startup.
+Useful for applications with long initialization times.
+![Common Parameter in Probes](https://github.com/user-attachments/assets/86f3e63f-de00-440a-8bc4-7e71f2f8351e)
+1. StatefulSet
+Purpose: Manages stateful applications that require unique, persistent identities and storage for each Pod.
+Key Features:
+Stable Network Identity: Each Pod has a unique, consistent hostname (e.g., pod-name-0, pod-name-1).
+Stable Storage: Each Pod can have its own persistent volume, ensuring data consistency even after Pod restarts.
+Ordered Deployment and Scaling:
+Pods are created, updated, and terminated in a specific order (0 → n).
+Use Case: Suitable for applications like databases (e.g., MySQL, Cassandra) or distributed systems where Pod identity and storage are critical.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-statefulset
+spec:
+  serviceName: "my-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-container
+          image: my-image
+          volumeMounts:
+            - name: my-volume
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: my-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+2. DaemonSet
+Purpose: Ensures that a copy of a specific Pod runs on every (or a subset of) node(s) in the cluster.
+Key Features:
+One Pod per Node: Automatically schedules Pods on all eligible nodes.
+Dynamic Updates: Automatically adds Pods to new nodes that are added to the cluster.
+Use Case: Ideal for node-level operations, such as logging, monitoring, or networking agents (e.g., Fluentd, Prometheus Node Exporter
+A Helm chart is a collection of files that describe a related set of Kubernetes resources. The chart's structure is organized in a specific directory layout. Here's the standard structure of a Helm chart and the purpose of each file or folder:
+
+my-helm-chart/
+├── Chart.yaml
+├── values.yaml
+├── templates/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   ├── _helpers.tpl
+│   └── NOTES.txt
+├── charts/
+├── README.md
+├── .helmignore
+2. Explanation of Files and Folders
+1. Chart.yaml
+Purpose: Metadata about the Helm chart.
+Content:
+apiVersion: v2           # Helm chart API version (v2 for Helm 3).
+name: my-helm-chart      # Name of the chart.
+version: 1.0.0           # Version of the chart.
+description: A sample Helm chart for Kubernetes
+appVersion: "1.16.0"     # Version of the application being packaged.
+Importance: Required for every Helm chart. Used to identify the chart and its version.2. values.yaml
+Purpose: Default configuration values for the chart.
+Content:
+replicaCount: 3
+image:
+  repository: nginx
+  tag: "1.21.6"
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+Importance: Users can override these values during chart installation with a custom values.yaml file or --set flags.
+3. templates/
+Purpose: Contains Kubernetes manifest templates for resources such as Deployments, Services, and Ingress.
+Common Files:
+deployment.yaml: Defines the Pod and ReplicaSet configuration.
+service.yaml: Configures a Kubernetes Service.
+ingress.yaml: Configures an Ingress resource.
+_helpers.tpl: Defines reusable template helpers (e.g., naming conventions).
+NOTES.txt: Contains user instructions displayed after installing the chart.
+Example (deployment.yaml) :
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 80
+   Importance: Contains the core logic for Kubernetes resources, making the chart reusable and dynamic.
+   4. charts/
+Purpose: Stores dependencies (other charts) required by this chart.
+Example:
+If your chart depends on another chart (e.g., a database chart), it’s placed here.
+Dependencies can also be defined in Chart.yaml under the dependencies section.
+Example in Chart.yaml:
+dependencies:
+  - name: mysql
+    version: 8.0.0
+    repository: https://charts.bitnami.com/bitnami
+5. README.md
+Purpose: Documentation for the chart.
+Content:
+Description of the chart.
+Instructions on how to use it.
+Examples of values.yaml overrides.
+6. .helmignore
+Purpose: Specifies files and directories to ignore when packaging the chart.
+Content:
+.DS_Store
+.git/
+.gitignore
+*.bak
+3. Installing a Helm Chart
+Command to install:
+helm install <release-name> ./my-helm-chart
+Override values:
+helm install <release-name> ./my-helm-chart -f custom-values.yaml
