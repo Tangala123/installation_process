@@ -265,3 +265,81 @@ Command to install:
 helm install <release-name> ./my-helm-chart
 Override values:
 helm install <release-name> ./my-helm-chart -f custom-values.yaml
+############################################################################
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  terraformVersion: '1.5.0'
+  awsRegion: 'eu-west-1'
+  tfVarsFile: 'non-prod.tfvars'
+
+steps:
+# Step 1: Install Terraform
+- task: UseTerraform@0
+  inputs:
+    terraformVersion: $(terraformVersion)
+
+# Step 2: AWS Authentication
+- task: AWSCLI@1
+  inputs:
+    awsServiceConnection: '<your-service-connection-name>'
+    regionName: $(awsRegion)
+
+# Step 3: Initialize Terraform
+- script: |
+    terraform init
+  displayName: 'Initialize Terraform'
+
+# Step 4: Validate Terraform
+- script: |
+    terraform validate
+  displayName: 'Validate Terraform'
+
+# Step 5: Plan Terraform
+- script: |
+    terraform plan -out=tfplan -var-file=$(tfVarsFile)
+  displayName: 'Plan Terraform'
+
+# Step 6: Apply Terraform
+- script: |
+    terraform apply -auto-approve tfplan
+  displayName: 'Apply Terraform'
+  
+=============================================
+
+AWS Service Connection:
+
+Replace <your-service-connection-name> with the name of your AWS service connection configured in Azure DevOps.
+Terraform Variables File:
+
+Ensure non-prod.tfvars contains all required variables for your Terraform modules.
+AWS Region:
+
+The pipeline uses eu-west-1 as the AWS region. Update this if your resources are in a different region.
+Terraform Commands:
+
+terraform init: Initializes Terraform.
+terraform validate: Validates the configuration.
+terraform plan: Generates an execution plan.
+terraform apply: Applies the plan to deploy resources.
+
+Steps to Connect Azure DevOps to AWS
+1. Create an AWS IAM User
+Log in to your AWS Management Console.
+Go to IAM > Users > Add User.
+Create a user with programmatic access (access key and secret key).
+Attach the necessary policies (e.g., AdministratorAccess or a custom policy with permissions for Terraform resources).
+Save the Access Key ID and Secret Access Key.
+
+2. Configure Azure DevOps Service Connection
+Log in to your Azure DevOps organization.
+Go to Project Settings > Service Connections > New Service Connection.
+Select AWS as the service connection type.
+Enter the Access Key ID and Secret Access Key from the IAM user you created.
+Test the connection and save it.
